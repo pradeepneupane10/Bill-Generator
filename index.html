@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nepal Petrol Bill - Tax Invoice Generator (A4 Landscape 2-Up)</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Noto+Sans+Devanagari:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- html2pdf.js for 1-click Direct PDF Download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Control Panel -->
+    <aside class="control-panel no-print">
+      <div class="panel-header">
+        <h2>⛽ Fuel Bill Controls</h2>
+        <p class="subtitle">Edit values or type directly into the bill on the right.</p>
+      </div>
+
+      <!-- Action / Download Buttons Top -->
+      <div class="action-buttons-top">
+        <button type="button" class="btn-primary btn-download" id="btnDownloadPdf">
+          📥 Download PDF (A4 Landscape)
+        </button>
+        <button type="button" class="btn-primary" id="btnPrint">
+          🖨️ Print (Ctrl + P)
+        </button>
+      </div>
+
+      <div class="control-group highlight-box">
+        <h3>📄 Print & Page Layout</h3>
+        <div class="layout-switch">
+          <label class="radio-card">
+            <input type="radio" name="printLayout" value="landscape-2up" checked>
+            <div class="radio-card-content">
+              <strong>🖨️ 2 Bills / A4 Landscape</strong>
+              <small>Two side-by-side bills on 1 A4 sheet</small>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="printLayout" value="single-portrait">
+            <div class="radio-card-content">
+              <strong>📄 Single Bill (Portrait)</strong>
+              <small>One large bill per page</small>
+            </div>
+          </label>
+        </div>
+
+        <div class="input-field mt-2">
+          <label for="copyLabelMode">Copy Sub-title Tags</label>
+          <select id="copyLabelMode">
+            <option value="none">None (Identical Original Bills)</option>
+            <option value="copies">Customer Copy & Office Copy</option>
+            <option value="custom">Original & Duplicate</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>⚡ Quick Fuel Rate & Calculation</h3>
+        
+        <div class="input-field">
+          <label for="fuelType">Fuel Type</label>
+          <select id="fuelType">
+            <option value="Petrol" data-hscode="2710.12.10" data-rate="200.00">Petrol (HS: 2710.12.10)</option>
+            <option value="Diesel" data-hscode="2710.19.10" data-rate="165.00">Diesel (HS: 2710.19.10)</option>
+            <option value="Auto LPG" data-hscode="2711.12.00" data-rate="140.00">Auto LPG (HS: 2711.12.00)</option>
+            <option value="Custom" data-hscode="" data-rate="">Custom Fuel</option>
+          </select>
+        </div>
+
+        <div class="input-field">
+          <label for="retailRate">Retail Pump Rate (NPR / Ltr incl. 13% VAT)</label>
+          <div class="input-with-prefix">
+            <span>Rs.</span>
+            <input type="number" id="retailRate" step="0.01" value="200.00" placeholder="e.g. 200.00">
+          </div>
+          <small class="help-text">Base rate before 13% VAT: <strong id="calculatedBaseRate">176.9911</strong></small>
+        </div>
+
+        <div class="calc-mode-switch">
+          <label><input type="radio" name="calcMode" value="qty" checked> By Quantity (Ltrs)</label>
+          <label><input type="radio" name="calcMode" value="amount"> By Total Amount (Rs.)</label>
+        </div>
+
+        <div class="input-field" id="qtyFieldGroup">
+          <label for="inputQty">Quantity (Liters)</label>
+          <input type="number" id="inputQty" step="0.01" value="10.00" placeholder="10.00">
+        </div>
+
+        <div class="input-field hidden" id="amountFieldGroup">
+          <label for="inputTotalAmount">Target Total Amount (NPR)</label>
+          <div class="input-with-prefix">
+            <span>Rs.</span>
+            <input type="number" id="inputTotalAmount" step="1" value="2000.00" placeholder="2000.00">
+          </div>
+        </div>
+
+        <div class="input-field">
+          <label for="inputDiscount">Discount (NPR)</label>
+          <input type="number" id="inputDiscount" step="0.01" value="0.00">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>📋 Invoice & Buyer Info</h3>
+        <div class="input-field">
+          <label for="invNumber">Invoice No.</label>
+          <input type="text" id="invNumber" value="848">
+        </div>
+        <div class="input-field">
+          <label for="buyerName">Buyer / Customer Name</label>
+          <input type="text" id="buyerName" value="CASH( C. G. Communications Ltd.)">
+        </div>
+        <div class="input-field">
+          <label for="buyerPan">Buyer PAN No.</label>
+          <input type="text" id="buyerPan" value="301512183">
+        </div>
+        <div class="input-field">
+          <label for="vehicleNo">Vehicle No.</label>
+          <input type="text" id="vehicleNo" placeholder="e.g. BA 2 PA 1234">
+        </div>
+        <div class="input-field">
+          <label for="buyerAddress">Buyer Address</label>
+          <input type="text" id="buyerAddress" placeholder="e.g. Kathmandu">
+        </div>
+        <div class="input-field">
+          <label for="buyerMobile">Buyer Mobile No.</label>
+          <input type="text" id="buyerMobile" placeholder="e.g. 98XXXXXXXX">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>📅 Dates, Signatures & Station</h3>
+        <div class="input-field">
+          <label for="invoiceDate">Invoice Date (AD)</label>
+          <input type="date" id="invoiceDate">
+        </div>
+        <div class="input-field">
+          <label for="invoiceMiti">Nepali Miti (BS)</label>
+          <input type="text" id="invoiceMiti" value="2083/4/23" placeholder="YYYY/M/D">
+        </div>
+        <div class="input-field">
+          <label for="invoiceTime">Generated Timestamp</label>
+          <input type="text" id="invoiceTime" value="2026-08-08 13:47:44">
+        </div>
+        <div class="input-field">
+          <label for="preparedByName">Prepared By Name</label>
+          <input type="text" id="preparedByName" value="Administrator Admin">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>🏢 Station Details</h3>
+        <div class="input-field">
+          <label for="stationName">Station Name</label>
+          <input type="text" id="stationName" value="HIMAL ENTERPRISES">
+        </div>
+        <div class="input-field">
+          <label for="stationAddress">Station Address</label>
+          <input type="text" id="stationAddress" value="CHA.NA. PA-06, CHECKPOST, KATHMANDU">
+        </div>
+        <div class="input-field">
+          <label for="stationEmail">Email</label>
+          <input type="text" id="stationEmail" value="himalenterprises2021@gmail.com">
+        </div>
+        <div class="input-field">
+          <label for="stationPan">Station PAN/VAT No.</label>
+          <input type="text" id="stationPan" value="500011548">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <h3>🎨 Paper Appearance</h3>
+        <div class="theme-buttons">
+          <button type="button" class="btn-theme active" id="btnPinkTheme">🌸 Authentic Pink Paper</button>
+          <button type="button" class="btn-theme" id="btnWhiteTheme">📄 Standard White Paper</button>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button type="button" class="btn-secondary" id="btnReset">🔄 Reset to Reference</button>
+      </div>
+    </aside>
+
+    <!-- Preview Area: Hold 2 bills side-by-side for Landscape A4 or 1 bill for Portrait -->
+    <main class="preview-area">
+      <div class="print-container landscape-mode" id="printSheet">
+        
+        <!-- BILL 1 (Left Copy) -->
+        <div class="bill-page pink-paper" id="billDocument1" data-bill-id="1">
+          <div class="copy-tag" id="copyTag1"></div>
+
+          <!-- Header -->
+          <header class="bill-header">
+            <div class="header-logo-badge">
+              <div class="logo-box">
+                <span class="np-text">हिमाल इन्टरप्राइजेज</span>
+                <span class="np-sub">थानकोट, काठमाडौं</span>
+              </div>
+            </div>
+            <div class="header-details">
+              <h1 class="company-name" contenteditable="true" data-sync="stationName">HIMAL ENTERPRISES</h1>
+              <div class="company-address" contenteditable="true" data-sync="stationAddress">CHA.NA. PA-06, CHECKPOST, KATHMANDU</div>
+              <div class="company-contact">
+                Phone No:- <span contenteditable="true" data-sync="stationPhone"></span> , Email :<span contenteditable="true" data-sync="stationEmail">himalenterprises2021@gmail.com</span>
+              </div>
+              <div class="company-pan">
+                PAN/VAT No. : <strong contenteditable="true" data-sync="stationPan">500011548</strong>
+              </div>
+            </div>
+          </header>
+
+          <div class="tax-invoice-badge">
+            Tax Invoice
+          </div>
+
+          <!-- Meta Section -->
+          <section class="invoice-meta-grid">
+            <div class="meta-col meta-left">
+              <div class="meta-row"><span class="meta-label">Invoice No. :</span> <span class="meta-val" contenteditable="true" data-sync="invNo">848</span></div>
+              <div class="meta-row"><span class="meta-label">Buyer :</span> <span class="meta-val" contenteditable="true" data-sync="buyer">CASH( C. G. Communications Ltd.)</span></div>
+              <div class="meta-row"><span class="meta-label">Pan No.:</span> <span class="meta-val" contenteditable="true" data-sync="pan">301512183</span></div>
+              <div class="meta-row"><span class="meta-label">Address :</span> <span class="meta-val" contenteditable="true" data-sync="address"></span></div>
+              <div class="meta-row"><span class="meta-label">Vehicle No.</span> <span class="meta-val" contenteditable="true" data-sync="vehicle"></span></div>
+            </div>
+            <div class="meta-col meta-right">
+              <div class="meta-row"><span class="meta-label">Invoice Date :</span> <span class="meta-val" contenteditable="true" data-sync="date">08/08/2026</span></div>
+              <div class="meta-row"><span class="meta-label">Invoice Miti :</span> <span class="meta-val" contenteditable="true" data-sync="miti">2083/4/23</span></div>
+              <div class="meta-row"><span class="meta-label">Buyer M.No. :</span> <span class="meta-val" contenteditable="true" data-sync="buyerMobile"></span></div>
+            </div>
+          </section>
+
+          <!-- Table -->
+          <table class="bill-table">
+            <thead>
+              <tr>
+                <th class="col-sn">S.N.</th>
+                <th class="col-hscode">HSCode</th>
+                <th class="col-particulars">Particular's</th>
+                <th class="col-qty">Qty</th>
+                <th class="col-unit">Unit</th>
+                <th class="col-rate">Rate</th>
+                <th class="col-disc">Disc.</th>
+                <th class="col-amount">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="item-row">
+                <td class="col-sn">1</td>
+                <td class="col-hscode" contenteditable="true" data-sync="hscode">2710.12.10</td>
+                <td class="col-particulars" contenteditable="true" data-sync="particulars">Petrol</td>
+                <td class="col-qty" contenteditable="true" data-sync="qty">10.00</td>
+                <td class="col-unit" contenteditable="true" data-sync="unit">LTRS</td>
+                <td class="col-rate" contenteditable="true" data-sync="rate">176.9911</td>
+                <td class="col-disc" contenteditable="true" data-sync="disc">0</td>
+                <td class="col-amount" data-sync="itemAmount">1,769.91</td>
+              </tr>
+              <!-- Blank filler rows -->
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td colspan="3" class="text-center total-label">Total</td>
+                <td class="col-qty" data-sync="totalQty">10.00</td>
+                <td colspan="3"></td>
+                <td class="col-amount" data-sync="tableTotalAmount">1,769.91</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- Summary -->
+          <section class="bill-summary-section">
+            <div class="summary-left">
+              <div class="in-words-row">
+                <span class="label">In Words :-</span>
+                <span class="value" contenteditable="true" data-sync="inWords">NRS Two Thousand And Zero Only</span>
+              </div>
+              <div class="remarks-row">
+                <span class="label">Remarks :-</span>
+                <span class="value" contenteditable="true" data-sync="remarks"></span>
+              </div>
+            </div>
+            <div class="summary-right">
+              <div class="calc-row">
+                <span class="calc-title">Basic Amount</span>
+                <span class="calc-sep">:</span>
+                <span class="calc-value" data-sync="basicAmount">1,769.91</span>
+              </div>
+              <div class="calc-row">
+                <span class="calc-title">Discount Amount</span>
+                <span class="calc-sep">:</span>
+                <span class="calc-value" data-sync="discountAmount"></span>
+              </div>
+              <div class="calc-row">
+                <span class="calc-title">Taxable Amount</span>
+                <span class="calc-sep">:</span>
+                <span class="calc-value" data-sync="taxableAmount">1,769.91</span>
+              </div>
+              <div class="calc-row">
+                <span class="calc-title">VAT 13%</span>
+                <span class="calc-sep">:</span>
+                <span class="calc-value" data-sync="vatAmount">230.09</span>
+              </div>
+              <div class="calc-row net-row">
+                <span class="calc-title">Net Amount</span>
+                <span class="calc-sep">:</span>
+                <span class="calc-value" data-sync="netAmount">2,000.00</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Footer Clean & Perfectly Aligned -->
+          <footer class="bill-footer">
+            <div class="sig-col sig-left">
+              <div class="sig-line"></div>
+              <div class="sig-title">Customer Signature</div>
+              <div class="generated-time">Invoice Generated On:- <span contenteditable="true" data-sync="generatedTime">2026-08-08 13:47:44</span></div>
+            </div>
+            <div class="sig-col sig-right">
+              <div class="prepared-by-text" contenteditable="true" data-sync="preparedByName">Administrator Admin</div>
+              <div class="sig-line"></div>
+              <div class="sig-title">Prepared By</div>
+            </div>
+          </footer>
+        </div>
+
+        <!-- Perforation / Cut line for 2-Up Landscape -->
+        <div class="cut-divider">
+          <div class="cut-line"></div>
+          <span class="cut-scissors">✂️ Cut Here</span>
+          <div class="cut-line"></div>
+        </div>
+
+        <!-- BILL 2 (Right Duplicate Copy) -->
+        <div class="bill-page pink-paper" id="billDocument2" data-bill-id="2">
+          <div class="copy-tag" id="copyTag2"></div>
+
+          <!-- Header -->
+          <header class="bill-header">
+            <div class="header-logo-badge">
+              <div class="logo-box">
+                <span class="np-text">हिमाल इन्टरप्राइजेज</span>
+                <span class="np-sub">थानकोट, काठमाडौं</span>
+              </div>
+            </div>
+            <div class="header-details">
+              <h1 class="company-name" contenteditable="true" data-sync="stationName">HIMAL ENTERPRISES</h1>
+              <div class="company-address" contenteditable="true" data-sync="stationAddress">CHA.NA. PA-06, CHECKPOST, KATHMANDU</div>
+              <div class="company-contact">
+                Phone No:- <span contenteditable="true" data-sync="stationPhone"></span> , Email :<span contenteditable="true" data-sync="stationEmail">himalenterprises2021@gmail.com</span>
+              </div>
+              <div class="company-pan">
+                PAN/VAT No. : <strong contenteditable="true" data-sync="stationPan">500011548</strong>
+              </div>
+            </div>
+          </header>
+
+          <div class="tax-invoice-badge">
+            Tax Invoice
+          </div>
+
+          <!-- Meta Section -->
+          <section class="invoice-meta-grid">
+            <div class="meta-col meta-left">
+              <div class="meta-row"><span class="meta-label">Invoice No. :</span> <span class="meta-val" contenteditable="true" data-sync="invNo">848</span></div>
+              <div class="meta-row"><span class="meta-label">Buyer :</span> <span class="meta-val" contenteditable="true" data-sync="buyer">CASH( C. G. Communications Ltd.)</span></div>
+              <div class="meta-row"><span class="meta-label">Pan No.:</span> <span class="meta-val" contenteditable="true" data-sync="pan">301512183</span></div>
+              <div class="meta-row"><span class="meta-label">Address :</span> <span class="meta-val" contenteditable="true" data-sync="address"></span></div>
+              <div class="meta-row"><span class="meta-label">Vehicle No.</span> <span class="meta-val" contenteditable="true" data-sync="vehicle"></span></div>
+            </div>
+            <div class="meta-col meta-right">
+              <div class="meta-row"><span class="meta-label">Invoice Date :</span> <span class="meta-val" contenteditable="true" data-sync="date">08/08/2026</span></div>
+              <div class="meta-row"><span class="meta-label">Invoice Miti :</span> <span class="meta-val" contenteditable="true" data-sync="miti">2083/4/23</span></div>
+              <div class="meta-row"><span class="meta-label">Buyer M.No. :</span> <span class="meta-val" contenteditable="true" data-sync="buyerMobile"></span></div>
+            </div>
+          </section>
+
+          <!-- Table -->
+          <table class="bill-table">
+            <thead>
+              <tr>
+                <th class="col-sn">S.N.</th>
+                <th class="col-hscode">HSCode</th>
+                <th class="col-particulars">Particular's</th>
+                <th class="col-qty">Qty</th>
+                <th class="col-unit">Unit</th>
+                <th class="col-rate">Rate</th>
+                <th class="col-disc">Disc.</th>
+                <th class="col-amount">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="item-row">
+                <td class="col-sn">1</td>
+                <td class="col-hscode" contenteditable="true" data-sync="hscode">2710.12.10</td>
+                <td class="col-particulars" contenteditable="true" data-sync="particulars">Petrol</td>
+                <td class="col-qty" contenteditable="true" data-sync="qty">10.00</td>
+                <td class="col-unit" contenteditable="true" data-sync="unit">LTRS</td>
+                <td class="col-rate" contenteditable="true" data-sync="rate">176.9911</td>
+                <td class="col-disc" contenteditable="true" data-sync="disc">0</td>
+                <td class="col-amount" data-sync="itemAmount">1,769.91</td>
+              </tr>
+              <!-- Blank filler rows -->
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td colspan="3" class="text-center total-label">Total</td>
+                <td class="col-qty" data-sync="totalQty">10.00</td>
+                <td colspan="3"></td>
+                <td class="col-amount" data-sync="tableTotalAmount">1,769.91</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- Summary -->
+          <section class="bill-summary-section">
+            <div class="summary-left">
+              <div class="in-words-row">
+                <span class="label">In Words :-</span>
+                <span class="value" contenteditable="true" data-sync="inWords">NRS Two Thousand And Zero Only</span>
+              </div>
+              <div class="remarks-row">
+                <span class="label">Remarks :-</span>
+                <span class="value" contenteditable="true" data-sync="remarks"></span>
+              </div>
+            </div>
+            <div class="summary-right">
+              <div class="calc-row">
+                <span class="calc-title">Basic Amount</span>
+                <span class="calc-sep">:</span>
+                <span class="calc-value" data-sync="basicAmount">1,769.91</span>
+              </div>
+              <div class="calc-row">
+                <span class="calc-title">Discount Amount</span>
+                <span class="calc-sep">:</span>
+                <span class="calc-value" data-sync="discountAmount"></span>
+              </div>
+              <div class="calc-row">
+                <span class="calc-title">Taxable Amount</span>
+                <span class="calc-sep">:</span>
+                <span class="calc-value" data-sync="taxableAmount">1,769.91</span>
+              </div>
+              <div class="calc-row">
+                <span class="calc-title">VAT 13%</span>
+                <span class="calc-sep">:</span>
+                <span class="calc-value" data-sync="vatAmount">230.09</span>
+              </div>
+              <div class="calc-row net-row">
+                <span class="calc-title">Net Amount</span>
+                <span class="calc-sep">:</span>
+                <span class="calc-value" data-sync="netAmount">2,000.00</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Footer Clean & Perfectly Aligned -->
+          <footer class="bill-footer">
+            <div class="sig-col sig-left">
+              <div class="sig-line"></div>
+              <div class="sig-title">Customer Signature</div>
+              <div class="generated-time">Invoice Generated On:- <span contenteditable="true" data-sync="generatedTime">2026-08-08 13:47:44</span></div>
+            </div>
+            <div class="sig-col sig-right">
+              <div class="prepared-by-text" contenteditable="true" data-sync="preparedByName">Administrator Admin</div>
+              <div class="sig-line"></div>
+              <div class="sig-title">Prepared By</div>
+            </div>
+          </footer>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

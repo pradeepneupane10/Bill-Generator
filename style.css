@@ -1,0 +1,932 @@
+/* CSS Stylesheet for Nepal Petrol Bill Tax Invoice Template */
+
+:root {
+  --bg-app: #0f172a;
+  --bg-sidebar: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-hover: #0ea5e9;
+  --border-color: #334155;
+  
+  /* Pink Receipt Paper Colors */
+  --receipt-pink: #f7a2bf;
+  --receipt-pink-dark: #f089ac;
+  --receipt-ink: #111827;
+  --receipt-border: #111827;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar Control Panel */
+.control-panel {
+  width: 380px;
+  min-width: 360px;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  padding: 18px;
+  overflow-y: auto;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  z-index: 10;
+}
+
+.panel-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-header .subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Top Action Buttons */
+.action-buttons-top {
+  display: flex;
+  gap: 8px;
+}
+
+.action-buttons-top button {
+  flex: 1;
+}
+
+.btn-download {
+  background: #10b981 !important;
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-download:hover {
+  background: #059669 !important;
+}
+
+.control-group {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.control-group.highlight-box {
+  border-color: #0284c7;
+  background: rgba(2, 132, 199, 0.1);
+}
+
+.control-group h3 {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.layout-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.radio-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.radio-card:has(input:checked) {
+  border-color: var(--accent);
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.radio-card input {
+  accent-color: var(--accent);
+}
+
+.radio-card-content strong {
+  display: block;
+  font-size: 0.82rem;
+  color: #fff;
+}
+
+.radio-card-content small {
+  font-size: 0.70rem;
+  color: var(--text-muted);
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.input-field {
+  margin-bottom: 10px;
+}
+
+.input-field:last-child {
+  margin-bottom: 0;
+}
+
+.input-field label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  margin-bottom: 3px;
+}
+
+.input-field input,
+.input-field select {
+  width: 100%;
+  padding: 7px 10px;
+  background-color: #0f172a;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.84rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.input-field input:focus,
+.input-field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.input-with-prefix {
+  display: flex;
+  align-items: center;
+  background-color: #0f172a;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.input-with-prefix span {
+  padding: 0 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border-color);
+}
+
+.input-with-prefix input {
+  border: none;
+  border-radius: 0 6px 6px 0;
+}
+
+.help-text {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.72rem;
+  color: #a5f3fc;
+}
+
+.calc-mode-switch {
+  display: flex;
+  gap: 10px;
+  margin: 8px 0;
+  background: #0f172a;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.calc-mode-switch label {
+  font-size: 0.76rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  color: #e2e8f0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.theme-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-theme {
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: #0f172a;
+  color: #cbd5e1;
+  font-size: 0.80rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.btn-theme.active {
+  border-color: var(--accent);
+  background: rgba(56, 189, 248, 0.15);
+  color: #fff;
+  font-weight: 600;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.btn-primary {
+  padding: 10px 12px;
+  background: #0284c7;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.btn-primary:hover {
+  background: #0369a1;
+}
+
+.btn-secondary {
+  padding: 8px;
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+/* ======================================================== */
+/* RECEIPT BILL PREVIEW & 2-UP LANDSCAPE A4 LAYOUT          */
+/* ======================================================== */
+
+.preview-area {
+  flex: 1;
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  background: radial-gradient(circle at top, #1e293b, #0f172a);
+}
+
+/* Print Sheet Container */
+.print-container {
+  display: flex;
+  position: relative;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+/* A4 Landscape 2-Up View */
+.print-container.landscape-mode {
+  width: 284mm;
+  min-height: 185mm;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 6mm;
+  background: transparent;
+}
+
+/* Single Portrait Mode */
+.print-container.portrait-mode {
+  width: 190mm;
+  min-height: 260mm;
+  flex-direction: column;
+}
+
+.print-container.portrait-mode #billDocument2,
+.print-container.portrait-mode .cut-divider {
+  display: none !important;
+}
+
+/* Cut Perforation line in Landscape */
+.cut-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  position: relative;
+  user-select: none;
+}
+
+.cut-line {
+  flex: 1;
+  width: 1px;
+  border-left: 1.2px dashed #64748b;
+}
+
+.cut-scissors {
+  font-size: 9px;
+  color: #94a3b8;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 6px 0;
+}
+
+/* The Individual Bill Page */
+.bill-page {
+  color: var(--receipt-ink);
+  font-family: 'Courier Prime', 'Consolas', 'Courier New', monospace;
+  position: relative;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.2s;
+  box-sizing: border-box;
+}
+
+/* Landscape Mode Sizing per bill */
+.landscape-mode .bill-page {
+  width: 136mm;
+  min-height: 185mm;
+  padding: 5mm 6mm 6mm 6mm;
+  font-size: 10px;
+  line-height: 1.15;
+}
+
+/* Portrait Mode Sizing per bill */
+.portrait-mode .bill-page {
+  width: 190mm;
+  min-height: 260mm;
+  padding: 14mm 14mm 12mm 14mm;
+  font-size: 12.5px;
+  line-height: 1.25;
+}
+
+/* Copy Tag */
+.copy-tag {
+  text-align: right;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #334155;
+  margin-bottom: -2px;
+  min-height: 10px;
+}
+
+/* Authentic Pink Paper Texture & Color */
+.bill-page.pink-paper {
+  background-color: #f7a2bf;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%;
+}
+
+.bill-page.white-paper {
+  background-color: #ffffff;
+}
+
+/* Content Editable styling */
+[contenteditable="true"] {
+  outline: none;
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+
+[contenteditable="true"]:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+[contenteditable="true"]:focus {
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 0 1px #000;
+}
+
+/* Header */
+.bill-header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.header-logo-badge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+}
+
+.logo-box {
+  border: 1px solid var(--receipt-ink);
+  border-radius: 50%;
+  width: 52px;
+  height: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  padding: 1px;
+  opacity: 0.85;
+}
+
+.portrait-mode .logo-box {
+  width: 70px;
+  height: 48px;
+}
+
+.logo-box .np-text {
+  font-size: 6.5px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.portrait-mode .logo-box .np-text {
+  font-size: 8px;
+}
+
+.logo-box .np-sub {
+  font-size: 5px;
+  line-height: 1;
+}
+
+.portrait-mode .logo-box .np-sub {
+  font-size: 6.5px;
+}
+
+.header-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.company-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 1px;
+}
+
+.portrait-mode .company-name {
+  font-size: 19px;
+  margin-bottom: 2px;
+}
+
+.company-address {
+  font-size: 9px;
+  font-weight: 700;
+  margin-bottom: 1px;
+}
+
+.portrait-mode .company-address {
+  font-size: 11.5px;
+}
+
+.company-contact {
+  font-size: 9px;
+  margin-bottom: 1px;
+}
+
+.portrait-mode .company-contact {
+  font-size: 11.5px;
+}
+
+.company-pan {
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.portrait-mode .company-pan {
+  font-size: 12px;
+}
+
+/* Tax Invoice Centered Sub-badge */
+.tax-invoice-badge {
+  text-align: center;
+  font-weight: 700;
+  font-size: 10.5px;
+  margin: 2px 0 4px 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.portrait-mode .tax-invoice-badge {
+  font-size: 13.5px;
+  margin: 4px 0 8px 0;
+}
+
+/* Meta Information Grid */
+.invoice-meta-grid {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--receipt-ink);
+  border-bottom: 1px solid var(--receipt-ink);
+  padding: 3px 1px;
+  margin-bottom: 0px;
+  font-size: 9.5px;
+}
+
+.portrait-mode .invoice-meta-grid {
+  padding: 6px 2px;
+  font-size: 12px;
+}
+
+.meta-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5px;
+}
+
+.meta-left {
+  flex: 1.35;
+}
+
+.meta-right {
+  flex: 0.95;
+}
+
+.meta-row {
+  display: flex;
+  align-items: baseline;
+}
+
+.meta-label {
+  font-weight: 700;
+  min-width: 75px;
+  display: inline-block;
+}
+
+.portrait-mode .meta-label {
+  min-width: 100px;
+}
+
+.meta-val {
+  font-weight: 400;
+  flex: 1;
+}
+
+/* Invoice Table */
+.bill-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: -1px;
+  font-size: 9.5px;
+}
+
+.portrait-mode .bill-table {
+  font-size: 12px;
+}
+
+.bill-table th,
+.bill-table td {
+  border-left: 1px solid var(--receipt-ink);
+  border-right: 1px solid var(--receipt-ink);
+  padding: 1.5px 3px;
+  vertical-align: middle;
+}
+
+.portrait-mode .bill-table th,
+.portrait-mode .bill-table td {
+  padding: 3px 5px;
+}
+
+.bill-table thead tr {
+  border-top: 1px solid var(--receipt-ink);
+  border-bottom: 1px solid var(--receipt-ink);
+}
+
+.bill-table th {
+  font-weight: 700;
+  text-align: left;
+  padding: 2px 3px;
+}
+
+/* Column Alignments & Widths */
+.col-sn { width: 6%; text-align: center; }
+.col-hscode { width: 15%; }
+.col-particulars { width: 28%; }
+.col-qty { width: 11%; text-align: right; }
+.col-unit { width: 8%; text-align: center; }
+.col-rate { width: 15%; text-align: right; }
+.col-disc { width: 5%; text-align: center; }
+.col-amount { width: 12%; text-align: right; }
+
+.empty-row td {
+  height: 10px;
+  border-top: none;
+  border-bottom: none;
+}
+
+.portrait-mode .empty-row td {
+  height: 18px;
+}
+
+.total-row {
+  border-top: 1px solid var(--receipt-ink);
+  border-bottom: 1px solid var(--receipt-ink);
+  font-weight: 700;
+}
+
+.total-row td {
+  padding: 2px 3px;
+}
+
+.total-label {
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Summary Section */
+.bill-summary-section {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 1px;
+  font-size: 9.5px;
+}
+
+.portrait-mode .bill-summary-section {
+  padding: 6px 2px;
+  font-size: 12px;
+}
+
+.summary-left {
+  flex: 1.15;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 6px;
+}
+
+.in-words-row {
+  margin-top: 1px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.in-words-row .label {
+  font-weight: 700;
+  font-style: italic;
+  margin-right: 2px;
+}
+
+.in-words-row .value {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.remarks-row {
+  margin-top: 6px;
+  font-weight: 700;
+}
+
+.portrait-mode .remarks-row {
+  margin-top: 20px;
+}
+
+.summary-right {
+  flex: 0.95;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+}
+
+.calc-title {
+  width: 95px;
+}
+
+.portrait-mode .calc-title {
+  width: 130px;
+}
+
+.calc-sep {
+  width: 10px;
+  text-align: center;
+}
+
+.calc-value {
+  flex: 1;
+  text-align: right;
+}
+
+.net-row {
+  border-top: 1px solid var(--receipt-ink);
+  padding-top: 1px;
+  margin-top: 1px;
+}
+
+/* ======================================================== */
+/* FOOTER WITH CLEAN TYPOGRAPHY (NO CURVE LINE)             */
+/* ======================================================== */
+
+.bill-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  padding-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 8.8px;
+  width: 100%;
+}
+
+.portrait-mode .bill-footer {
+  padding-top: 28px;
+  padding-bottom: 4px;
+  font-size: 11.5px;
+}
+
+.sig-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.sig-left {
+  width: 52%;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.sig-right {
+  width: 44%;
+  align-items: center;
+  text-align: center;
+}
+
+/* Clean text for administrator without wavy line */
+.prepared-by-text {
+  font-size: 9.2px;
+  font-weight: 700;
+  font-family: 'Courier Prime', monospace;
+  color: var(--receipt-ink);
+  margin-bottom: 2px;
+  text-align: center;
+  min-height: 12px;
+}
+
+.portrait-mode .prepared-by-text {
+  font-size: 11.5px;
+  margin-bottom: 3px;
+}
+
+/* Responsive CSS Dotted Line */
+.sig-line {
+  width: 100%;
+  border-bottom: 1.5px dotted var(--receipt-ink);
+  margin-bottom: 3px;
+  height: 1px;
+}
+
+.sig-title {
+  font-weight: 700;
+  margin-bottom: 1px;
+  white-space: nowrap;
+}
+
+.generated-time {
+  font-size: 8.2px;
+  font-weight: 700;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.portrait-mode .generated-time {
+  font-size: 10.5px;
+  margin-top: 4px;
+}
+
+/* ======================================================== */
+/* PRINT STYLES (EXACT FIT 1-PAGE NO CUTOFF)                */
+/* ======================================================== */
+
+@media print {
+  html, body {
+    width: 297mm !important;
+    height: 210mm !important;
+    background: #fff !important;
+    color: #000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .no-print,
+  .control-panel {
+    display: none !important;
+  }
+
+  .preview-area {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    display: block !important;
+    width: 297mm !important;
+    height: 210mm !important;
+  }
+
+  /* Landscape 2-Up Exact Fit on 1 Page */
+  .landscape-mode {
+    width: 297mm !important;
+    height: 200mm !important;
+    padding: 4mm 6mm !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    gap: 4mm !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .landscape-mode .bill-page {
+    box-shadow: none !important;
+    width: 138mm !important;
+    height: 192mm !important;
+    margin: 0 !important;
+    padding: 4mm 5.5mm 4mm 5.5mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  .landscape-mode .cut-divider {
+    display: flex !important;
+  }
+
+  .landscape-mode .cut-line {
+    border-left: 1px dashed #475569 !important;
+  }
+
+  /* Portrait Mode Print Specifics */
+  .portrait-mode {
+    width: 210mm !important;
+    height: 297mm !important;
+    padding: 8mm !important;
+    display: block !important;
+  }
+
+  .portrait-mode .bill-page {
+    box-shadow: none !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 8mm 10mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+}
