@@ -1,20 +1,66 @@
 /**
- * Nepal Petrol Bill - Dynamic Fuel Rate & Tax Calculator (A4 Landscape 2-Up & PDF Download)
+ * Nepal Petrol Bill - Multi-Template Tax Invoice Generator (Himal & Banglamukhi)
  */
 
 // Fuel Presets Database
 const FUEL_PRESETS = {
-  Petrol: { hscode: '2710.12.10', name: 'Petrol', defaultRate: 200.00 },
-  Diesel: { hscode: '2710.19.10', name: 'Diesel', defaultRate: 165.00 },
-  'Auto LPG': { hscode: '2711.12.00', name: 'Auto LPG', defaultRate: 140.00 },
-  Custom: { hscode: '', name: 'Fuel', defaultRate: 200.00 }
+  Petrol: { hscode: '2710.12.10', name: 'Petrol', nameCaps: 'PETROL', defaultRate: 200.00 },
+  Diesel: { hscode: '2710.19.10', name: 'Diesel', nameCaps: 'DIESEL', defaultRate: 165.00 },
+  'Auto LPG': { hscode: '2711.12.00', name: 'Auto LPG', nameCaps: 'AUTO LPG', defaultRate: 140.00 },
+  Custom: { hscode: '', name: 'Fuel', nameCaps: 'FUEL', defaultRate: 200.00 }
 };
 
-// Global State Object
+// Preset Templates
+const TEMPLATES = {
+  himal: {
+    name: 'Himal Enterprises',
+    stationName: 'HIMAL ENTERPRISES',
+    stationAddress: 'CHA.NA. PA-06, CHECKPOST, KATHMANDU',
+    stationPhone: '',
+    stationEmail: 'himalenterprises2021@gmail.com',
+    stationPan: '500011548',
+    invNumber: '848',
+    buyerName: 'CASH( C. G. Communications Ltd.)',
+    buyerPan: '301512183',
+    buyerAddress: '',
+    buyerMobile: '',
+    vehicleNo: '',
+    invoiceDate: '08/08/2026',
+    invoiceMiti: '2083/4/23',
+    invoiceTime: '2026-08-08 13:47:44',
+    preparedByName: 'Administrator Admin',
+    paperTheme: 'pink'
+  },
+  banglamukhi: {
+    name: 'Banglamukhi Oil Store',
+    stationName: 'BANGLAMUKHI OIL STORE PRIVATE LIMITED',
+    stationAddress: 'Sanobhadyang, Kathmandu',
+    stationPhone: '9745694481',
+    stationEmail: 'Bangalamukhioilstore@gmail.com',
+    stationPan: '610152898',
+    invNumber: 'TI681-MMX-83/84',
+    buyerName: 'CG Communications',
+    buyerPan: '301512183',
+    buyerAddress: 'Thapathali, Kathmandu',
+    buyerMobile: '9707051000',
+    vehicleNo: '',
+    paymentMode: 'cash',
+    dueDate: '0 Days',
+    invoiceDate: '31/08/2026',
+    invoiceMiti: '15/05/2083 09:41',
+    invoiceTime: '2026-08-31 09:41:00',
+    preparedByName: '',
+    paperTheme: 'white'
+  }
+};
+
+// Global State
 const state = {
+  template: 'himal', // 'himal' or 'banglamukhi'
   fuelType: 'Petrol',
   hscode: '2710.12.10',
   particulars: 'Petrol',
+  particularsCaps: 'PETROL',
   retailRate: 200.00, // NPR per Liter inclusive of 13% VAT
   baseRate: 176.99115044, // Rate exclusive of VAT (retailRate / 1.13)
   calcMode: 'qty', // 'qty' or 'amount'
@@ -34,6 +80,8 @@ const state = {
   vehicleNo: '',
   buyerAddress: '',
   buyerMobile: '',
+  paymentMode: 'cash',
+  dueDate: '0 Days',
   invoiceDate: '08/08/2026',
   invoiceMiti: '2083/4/23',
   invoiceTime: '2026-08-08 13:47:44',
@@ -46,7 +94,7 @@ const state = {
   remarks: ''
 };
 
-// Helper: Format Number with commas (e.g., 1,769.91)
+// Format Number with commas
 function formatCurrency(val, decimals = 2) {
   if (isNaN(val) || val === null) return '0.00';
   const parts = Number(val).toFixed(decimals).split('.');
@@ -54,9 +102,9 @@ function formatCurrency(val, decimals = 2) {
   return parts.join('.');
 }
 
-// Convert Number to Words (Nepal Standard: NRS ... Only)
-function numberToWords(amount) {
-  if (isNaN(amount) || amount <= 0) return 'NRS Zero And Zero Only';
+// Convert Number to Words (Nepal Standard)
+function numberToWords(amount, allCaps = false) {
+  if (isNaN(amount) || amount <= 0) return allCaps ? 'NRS ZERO ONLY' : 'NRS Zero And Zero Only';
 
   const units = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
                  'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
@@ -85,15 +133,15 @@ function numberToWords(amount) {
   let rupeesStr = '';
   let temp = rupees;
 
-  if (temp >= 10000000) { // Crores
+  if (temp >= 10000000) {
     rupeesStr += convertGroup(Math.floor(temp / 10000000)) + ' Crore ';
     temp %= 10000000;
   }
-  if (temp >= 100000) { // Lakhs
+  if (temp >= 100000) {
     rupeesStr += convertGroup(Math.floor(temp / 100000)) + ' Lakh ';
     temp %= 100000;
   }
-  if (temp >= 1000) { // Thousands
+  if (temp >= 1000) {
     rupeesStr += convertGroup(Math.floor(temp / 1000)) + ' Thousand ';
     temp %= 1000;
   }
@@ -103,11 +151,21 @@ function numberToWords(amount) {
 
   rupeesStr = rupeesStr.trim() || 'Zero';
 
-  let words = `NRS ${rupeesStr}`;
-  if (paisa > 0) {
-    words += ` And ${convertGroup(paisa)} Paisa Only`;
+  let words = '';
+  if (allCaps) {
+    words = `${rupeesStr.toUpperCase()}`;
+    if (paisa > 0) {
+      words += ` AND ${convertGroup(paisa).toUpperCase()} PAISA ONLY`;
+    } else {
+      words += ' ONLY';
+    }
   } else {
-    words += ' And Zero Only';
+    words = `NRS ${rupeesStr}`;
+    if (paisa > 0) {
+      words += ` And ${convertGroup(paisa)} Paisa Only`;
+    } else {
+      words += ' And Zero Only';
+    }
   }
 
   return words;
@@ -130,9 +188,8 @@ function recalculate(source = 'qty') {
     state.basicAmount = state.taxableAmount + state.discount;
     state.qty = state.baseRate > 0 ? (state.basicAmount / state.baseRate) : 0;
 
-    document.getElementById('inputQty').value = state.qty.toFixed(2);
+    document.getElementById('inputQty').value = state.qty.toFixed(3);
   } else {
-    // Mode 'qty' or direct rate change
     const qty = parseFloat(document.getElementById('inputQty').value) || 0;
     state.qty = qty;
     state.discount = parseFloat(document.getElementById('inputDiscount').value) || 0;
@@ -148,11 +205,25 @@ function recalculate(source = 'qty') {
   updateAllUI();
 }
 
-// Update all synchronized elements across both twin bills
+// Render 9 Boxed PAN digits
+function renderPanBoxes(panNumber) {
+  const clean = String(panNumber || '').replace(/\D/g, '').padEnd(9, ' ');
+  let html = '';
+  for (let i = 0; i < 9; i++) {
+    const ch = clean[i] || '&nbsp;';
+    html += `<div class="b-pan-box">${ch}</div>`;
+  }
+  const box1 = document.getElementById('stationPanBoxes1');
+  const box2 = document.getElementById('stationPanBoxes2');
+  if (box1) box1.innerHTML = html;
+  if (box2) box2.innerHTML = html;
+}
+
+// Update all UI elements
 function updateAllUI() {
   document.getElementById('calculatedBaseRate').textContent = state.baseRate.toFixed(4);
 
-  // Sync to all elements with data-sync attribute in both bills
+  // Sync state to all elements with data-sync
   document.querySelectorAll('[data-sync="stationName"]').forEach(el => el.textContent = state.stationName);
   document.querySelectorAll('[data-sync="stationAddress"]').forEach(el => el.textContent = state.stationAddress);
   document.querySelectorAll('[data-sync="stationPhone"]').forEach(el => el.textContent = state.stationPhone);
@@ -164,26 +235,37 @@ function updateAllUI() {
   document.querySelectorAll('[data-sync="pan"]').forEach(el => el.textContent = state.buyerPan);
   document.querySelectorAll('[data-sync="address"]').forEach(el => el.textContent = state.buyerAddress);
   document.querySelectorAll('[data-sync="vehicle"]').forEach(el => el.textContent = state.vehicleNo);
+  document.querySelectorAll('[data-sync="paymentMode"]').forEach(el => el.textContent = state.paymentMode);
+  document.querySelectorAll('[data-sync="dueDate"]').forEach(el => el.textContent = state.dueDate);
   document.querySelectorAll('[data-sync="date"]').forEach(el => el.textContent = state.invoiceDate);
   document.querySelectorAll('[data-sync="miti"]').forEach(el => el.textContent = state.invoiceMiti);
   document.querySelectorAll('[data-sync="buyerMobile"]').forEach(el => el.textContent = state.buyerMobile);
 
   document.querySelectorAll('[data-sync="hscode"]').forEach(el => el.textContent = state.hscode);
-  document.querySelectorAll('[data-sync="particulars"]').forEach(el => el.textContent = state.particulars);
-  document.querySelectorAll('[data-sync="qty"]').forEach(el => el.textContent = state.qty.toFixed(2));
+  document.querySelectorAll('[data-sync="particulars"]').forEach(el => {
+    el.textContent = state.template === 'banglamukhi' ? (state.particularsCaps || state.particulars.toUpperCase()) : state.particulars;
+  });
+  document.querySelectorAll('[data-sync="qty"]').forEach(el => {
+    el.textContent = state.template === 'banglamukhi' ? state.qty.toFixed(3) : state.qty.toFixed(2);
+  });
   document.querySelectorAll('[data-sync="unit"]').forEach(el => el.textContent = state.unit);
-  document.querySelectorAll('[data-sync="rate"]').forEach(el => el.textContent = state.baseRate.toFixed(4));
-  document.querySelectorAll('[data-sync="disc"]').forEach(el => el.textContent = state.discount > 0 ? state.discount.toFixed(2) : '0');
+  document.querySelectorAll('[data-sync="rate"]').forEach(el => {
+    el.textContent = state.template === 'banglamukhi' ? state.baseRate.toFixed(2) : state.baseRate.toFixed(4);
+  });
+  document.querySelectorAll('[data-sync="disc"]').forEach(el => el.textContent = state.discount > 0 ? state.discount.toFixed(2) : '0.00');
   document.querySelectorAll('[data-sync="itemAmount"]').forEach(el => el.textContent = formatCurrency(state.basicAmount));
 
-  document.querySelectorAll('[data-sync="totalQty"]').forEach(el => el.textContent = state.qty.toFixed(2));
+  document.querySelectorAll('[data-sync="totalQty"]').forEach(el => {
+    el.textContent = state.template === 'banglamukhi' ? state.qty.toFixed(3) : state.qty.toFixed(2);
+  });
   document.querySelectorAll('[data-sync="tableTotalAmount"]').forEach(el => el.textContent = formatCurrency(state.basicAmount));
 
-  document.querySelectorAll('[data-sync="inWords"]').forEach(el => el.textContent = numberToWords(state.netAmount));
+  document.querySelectorAll('[data-sync="inWords"]').forEach(el => el.textContent = numberToWords(state.netAmount, false));
+  document.querySelectorAll('[data-sync="inWordsCaps"]').forEach(el => el.textContent = numberToWords(state.netAmount, true));
   document.querySelectorAll('[data-sync="remarks"]').forEach(el => el.textContent = state.remarks);
 
   document.querySelectorAll('[data-sync="basicAmount"]').forEach(el => el.textContent = formatCurrency(state.basicAmount));
-  document.querySelectorAll('[data-sync="discountAmount"]').forEach(el => el.textContent = state.discount > 0 ? formatCurrency(state.discount) : '');
+  document.querySelectorAll('[data-sync="discountAmount"]').forEach(el => el.textContent = state.discount > 0 ? formatCurrency(state.discount) : '0.00');
   document.querySelectorAll('[data-sync="taxableAmount"]').forEach(el => el.textContent = formatCurrency(state.taxableAmount));
   document.querySelectorAll('[data-sync="vatAmount"]').forEach(el => el.textContent = formatCurrency(state.vatAmount));
   document.querySelectorAll('[data-sync="netAmount"]').forEach(el => el.textContent = formatCurrency(state.netAmount));
@@ -191,7 +273,7 @@ function updateAllUI() {
   document.querySelectorAll('[data-sync="generatedTime"]').forEach(el => el.textContent = state.invoiceTime);
   document.querySelectorAll('[data-sync="preparedByName"]').forEach(el => el.textContent = state.preparedByName);
 
-  // Update Copy Tags
+  renderPanBoxes(state.stationPan);
   updateCopyTags();
 }
 
@@ -210,7 +292,69 @@ function updateCopyTags() {
   }
 }
 
-// PDF Download Function using html2pdf
+// Switch between templates (Himal vs Banglamukhi)
+function switchTemplate(tplKey) {
+  state.template = tplKey;
+  const printSheet = document.getElementById('printSheet');
+  
+  if (tplKey === 'banglamukhi') {
+    printSheet.classList.remove('format-himal');
+    printSheet.classList.add('format-banglamukhi');
+    loadTemplateDefaults(TEMPLATES.banglamukhi);
+  } else {
+    printSheet.classList.remove('format-banglamukhi');
+    printSheet.classList.add('format-himal');
+    loadTemplateDefaults(TEMPLATES.himal);
+  }
+
+  recalculate();
+}
+
+function loadTemplateDefaults(tpl) {
+  state.stationName = tpl.stationName;
+  state.stationAddress = tpl.stationAddress;
+  state.stationPhone = tpl.stationPhone;
+  state.stationEmail = tpl.stationEmail;
+  state.stationPan = tpl.stationPan;
+  state.invNumber = tpl.invNumber;
+  state.buyerName = tpl.buyerName;
+  state.buyerPan = tpl.buyerPan;
+  state.buyerAddress = tpl.buyerAddress;
+  state.buyerMobile = tpl.buyerMobile;
+  state.vehicleNo = tpl.vehicleNo;
+  state.invoiceDate = tpl.invoiceDate;
+  state.invoiceMiti = tpl.invoiceMiti;
+  state.invoiceTime = tpl.invoiceTime;
+  state.preparedByName = tpl.preparedByName;
+  if (tpl.paymentMode) state.paymentMode = tpl.paymentMode;
+  if (tpl.dueDate) state.dueDate = tpl.dueDate;
+
+  // Sync inputs
+  document.getElementById('stationName').value = state.stationName;
+  document.getElementById('stationAddress').value = state.stationAddress;
+  document.getElementById('stationPhone').value = state.stationPhone;
+  document.getElementById('stationEmail').value = state.stationEmail;
+  document.getElementById('stationPan').value = state.stationPan;
+  document.getElementById('invNumber').value = state.invNumber;
+  document.getElementById('buyerName').value = state.buyerName;
+  document.getElementById('buyerPan').value = state.buyerPan;
+  document.getElementById('buyerAddress').value = state.buyerAddress;
+  document.getElementById('buyerMobile').value = state.buyerMobile;
+  document.getElementById('vehicleNo').value = state.vehicleNo;
+  document.getElementById('invoiceMiti').value = state.invoiceMiti;
+  document.getElementById('invoiceTime').value = state.invoiceTime;
+  if (document.getElementById('paymentMode')) document.getElementById('paymentMode').value = state.paymentMode;
+  if (document.getElementById('dueDate')) document.getElementById('dueDate').value = state.dueDate;
+
+  // Apply paper color
+  if (tpl.paperTheme === 'white') {
+    document.getElementById('btnWhiteTheme').click();
+  } else {
+    document.getElementById('btnPinkTheme').click();
+  }
+}
+
+// Download PDF
 function downloadAsPDF() {
   const element = document.getElementById('printSheet');
   const invNo = state.invNumber || 'bill';
@@ -243,7 +387,7 @@ function downloadAsPDF() {
       btn.disabled = false;
     }).catch(err => {
       console.error(err);
-      alert('Generating via Print Dialog...');
+      alert('Opening Print Dialog...');
       window.print();
       btn.textContent = originalText;
       btn.disabled = false;
@@ -255,8 +399,13 @@ function downloadAsPDF() {
   }
 }
 
-// Two-way bindings for inputs
+// Setup Event Listeners
 function setupBindings() {
+  // Template Select handler
+  document.getElementById('templateSelect').addEventListener('change', (e) => {
+    switchTemplate(e.target.value);
+  });
+
   const fieldMap = [
     { input: 'invNumber', stateKey: 'invNumber' },
     { input: 'buyerName', stateKey: 'buyerName' },
@@ -264,11 +413,13 @@ function setupBindings() {
     { input: 'vehicleNo', stateKey: 'vehicleNo' },
     { input: 'buyerAddress', stateKey: 'buyerAddress' },
     { input: 'buyerMobile', stateKey: 'buyerMobile' },
+    { input: 'paymentMode', stateKey: 'paymentMode' },
+    { input: 'dueDate', stateKey: 'dueDate' },
     { input: 'invoiceMiti', stateKey: 'invoiceMiti' },
     { input: 'invoiceTime', stateKey: 'invoiceTime' },
-    { input: 'preparedByName', stateKey: 'preparedByName' },
     { input: 'stationName', stateKey: 'stationName' },
     { input: 'stationAddress', stateKey: 'stationAddress' },
+    { input: 'stationPhone', stateKey: 'stationPhone' },
     { input: 'stationEmail', stateKey: 'stationEmail' },
     { input: 'stationPan', stateKey: 'stationPan' }
   ];
@@ -299,6 +450,8 @@ function setupBindings() {
         pan: 'buyerPan',
         address: 'buyerAddress',
         vehicle: 'vehicleNo',
+        paymentMode: 'paymentMode',
+        dueDate: 'dueDate',
         date: 'invoiceDate',
         miti: 'invoiceMiti',
         buyerMobile: 'buyerMobile',
@@ -355,6 +508,7 @@ function setupBindings() {
       const preset = FUEL_PRESETS[val];
       state.hscode = preset.hscode;
       state.particulars = preset.name;
+      state.particularsCaps = preset.nameCaps;
       if (preset.defaultRate) {
         state.retailRate = preset.defaultRate;
         document.getElementById('retailRate').value = preset.defaultRate.toFixed(2);
@@ -399,7 +553,7 @@ function setupBindings() {
     recalculate(state.calcMode);
   });
 
-  // Layout switcher (A4 Landscape 2-Up vs Portrait)
+  // Layout switcher
   const printSheet = document.getElementById('printSheet');
   const btnPrint = document.getElementById('btnPrint');
   const btnDownloadPdf = document.getElementById('btnDownloadPdf');
@@ -451,7 +605,7 @@ function setupBindings() {
     btnPink.classList.remove('active');
   });
 
-  // Direct Download PDF button
+  // Download PDF button
   btnDownloadPdf.addEventListener('click', () => {
     downloadAsPDF();
   });
@@ -463,7 +617,8 @@ function setupBindings() {
 
   // Reset button
   document.getElementById('btnReset').addEventListener('click', () => {
-    resetToReference();
+    const curTpl = state.template || 'himal';
+    switchTemplate(curTpl);
   });
 }
 
@@ -475,52 +630,6 @@ function updatePrintPageStyle(orientation) {
     document.head.appendChild(styleEl);
   }
   styleEl.textContent = `@media print { @page { size: A4 ${orientation}; margin: 4mm 6mm; } }`;
-}
-
-function resetToReference() {
-  document.getElementById('fuelType').value = 'Petrol';
-  document.getElementById('retailRate').value = '200.00';
-  document.getElementById('inputQty').value = '10.00';
-  document.getElementById('inputDiscount').value = '0.00';
-  document.getElementById('invNumber').value = '848';
-  document.getElementById('buyerName').value = 'CASH( C. G. Communications Ltd.)';
-  document.getElementById('buyerPan').value = '301512183';
-  document.getElementById('vehicleNo').value = '';
-  document.getElementById('buyerAddress').value = '';
-  document.getElementById('buyerMobile').value = '';
-  document.getElementById('invoiceMiti').value = '2083/4/23';
-  document.getElementById('invoiceTime').value = '2026-08-08 13:47:44';
-  document.getElementById('preparedByName').value = 'Administrator Admin';
-  document.getElementById('stationName').value = 'HIMAL ENTERPRISES';
-  document.getElementById('stationAddress').value = 'CHA.NA. PA-06, CHECKPOST, KATHMANDU';
-  document.getElementById('stationEmail').value = 'himalenterprises2021@gmail.com';
-  document.getElementById('stationPan').value = '500011548';
-
-  state.fuelType = 'Petrol';
-  state.hscode = '2710.12.10';
-  state.particulars = 'Petrol';
-  state.retailRate = 200.00;
-  state.calcMode = 'qty';
-  state.invNumber = '848';
-  state.buyerName = 'CASH( C. G. Communications Ltd.)';
-  state.buyerPan = '301512183';
-  state.vehicleNo = '';
-  state.buyerAddress = '';
-  state.buyerMobile = '';
-  state.invoiceDate = '08/08/2026';
-  state.invoiceMiti = '2083/4/23';
-  state.invoiceTime = '2026-08-08 13:47:44';
-  state.preparedByName = 'Administrator Admin';
-  state.stationName = 'HIMAL ENTERPRISES';
-  state.stationAddress = 'CHA.NA. PA-06, CHECKPOST, KATHMANDU';
-  state.stationEmail = 'himalenterprises2021@gmail.com';
-  state.stationPan = '500011548';
-
-  document.querySelector('input[name="calcMode"][value="qty"]').checked = true;
-  document.getElementById('qtyFieldGroup').classList.remove('hidden');
-  document.getElementById('amountFieldGroup').classList.add('hidden');
-
-  recalculate('qty');
 }
 
 // Initial Boot
