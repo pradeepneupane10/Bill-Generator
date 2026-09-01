@@ -104,7 +104,7 @@ function formatCurrency(val, decimals = 2) {
 
 // Convert Number to Words (Nepal Standard)
 function numberToWords(amount, allCaps = false) {
-  if (isNaN(amount) || amount <= 0) return allCaps ? 'NRS ZERO ONLY' : 'NRS Zero And Zero Only';
+  if (isNaN(amount) || amount <= 0) return allCaps ? 'TWO THOUSAND ONLY' : 'NRS Two Thousand And Zero Only';
 
   const units = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
                  'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
@@ -188,7 +188,7 @@ function recalculate(source = 'qty') {
     state.basicAmount = state.taxableAmount + state.discount;
     state.qty = state.baseRate > 0 ? (state.basicAmount / state.baseRate) : 0;
 
-    document.getElementById('inputQty').value = state.qty.toFixed(3);
+    document.getElementById('inputQty').value = state.template === 'banglamukhi' ? state.qty.toFixed(3) : state.qty.toFixed(2);
   } else {
     const qty = parseFloat(document.getElementById('inputQty').value) || 0;
     state.qty = qty;
@@ -210,7 +210,7 @@ function renderPanBoxes(panNumber) {
   const clean = String(panNumber || '').replace(/\D/g, '').padEnd(9, ' ');
   let html = '';
   for (let i = 0; i < 9; i++) {
-    const ch = clean[i] || '&nbsp;';
+    const ch = clean[i] && clean[i] !== ' ' ? clean[i] : '&nbsp;';
     html += `<div class="b-pan-box">${ch}</div>`;
   }
   const box1 = document.getElementById('stationPanBoxes1');
@@ -241,7 +241,9 @@ function updateAllUI() {
   document.querySelectorAll('[data-sync="miti"]').forEach(el => el.textContent = state.invoiceMiti);
   document.querySelectorAll('[data-sync="buyerMobile"]').forEach(el => el.textContent = state.buyerMobile);
 
-  document.querySelectorAll('[data-sync="hscode"]').forEach(el => el.textContent = state.hscode);
+  document.querySelectorAll('[data-sync="hscode"]').forEach(el => {
+    el.textContent = state.template === 'banglamukhi' ? '' : state.hscode;
+  });
   document.querySelectorAll('[data-sync="particulars"]').forEach(el => {
     el.textContent = state.template === 'banglamukhi' ? (state.particularsCaps || state.particulars.toUpperCase()) : state.particulars;
   });
@@ -252,7 +254,7 @@ function updateAllUI() {
   document.querySelectorAll('[data-sync="rate"]').forEach(el => {
     el.textContent = state.template === 'banglamukhi' ? state.baseRate.toFixed(2) : state.baseRate.toFixed(4);
   });
-  document.querySelectorAll('[data-sync="disc"]').forEach(el => el.textContent = state.discount > 0 ? state.discount.toFixed(2) : '0.00');
+  document.querySelectorAll('[data-sync="disc"]').forEach(el => el.textContent = state.discount > 0 ? state.discount.toFixed(2) : (state.template === 'banglamukhi' ? '0.00' : '0'));
   document.querySelectorAll('[data-sync="itemAmount"]').forEach(el => el.textContent = formatCurrency(state.basicAmount));
 
   document.querySelectorAll('[data-sync="totalQty"]').forEach(el => {
@@ -265,7 +267,7 @@ function updateAllUI() {
   document.querySelectorAll('[data-sync="remarks"]').forEach(el => el.textContent = state.remarks);
 
   document.querySelectorAll('[data-sync="basicAmount"]').forEach(el => el.textContent = formatCurrency(state.basicAmount));
-  document.querySelectorAll('[data-sync="discountAmount"]').forEach(el => el.textContent = state.discount > 0 ? formatCurrency(state.discount) : '0.00');
+  document.querySelectorAll('[data-sync="discountAmount"]').forEach(el => el.textContent = state.discount > 0 ? formatCurrency(state.discount) : (state.template === 'banglamukhi' ? '0.00' : ''));
   document.querySelectorAll('[data-sync="taxableAmount"]').forEach(el => el.textContent = formatCurrency(state.taxableAmount));
   document.querySelectorAll('[data-sync="vatAmount"]').forEach(el => el.textContent = formatCurrency(state.vatAmount));
   document.querySelectorAll('[data-sync="netAmount"]').forEach(el => el.textContent = formatCurrency(state.netAmount));

@@ -11,9 +11,7 @@
   
   /* Pink Receipt Paper Colors */
   --receipt-pink: #f7a2bf;
-  --receipt-pink-dark: #f089ac;
   --receipt-ink: #111827;
-  --receipt-border: #111827;
 }
 
 * {
@@ -99,7 +97,7 @@ body {
 
 .control-group.highlight-box-accent {
   border-color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(245, 158, 11, 0.12);
 }
 
 .control-group h3 {
@@ -307,7 +305,7 @@ body {
 }
 
 /* ======================================================== */
-/* TEMPLATE SWITCHER VISIBILITY LOGIC                       */
+/* TEMPLATE SWITCHER VISIBILITY                             */
 /* ======================================================== */
 
 .template-view {
@@ -332,7 +330,7 @@ body {
 }
 
 /* ======================================================== */
-/* RECEIPT BILL PREVIEW & 2-UP LANDSCAPE A4 LAYOUT          */
+/* PREVIEW AREA & A4 CONTAINER                              */
 /* ======================================================== */
 
 .preview-area {
@@ -415,8 +413,8 @@ body {
 .landscape-mode .bill-page {
   width: 136mm;
   min-height: 185mm;
-  padding: 4mm 5.5mm 5mm 5.5mm;
-  font-size: 9.8px;
+  padding: 4mm 5.5mm 4.5mm 5.5mm;
+  font-size: 9.6px;
   line-height: 1.15;
 }
 
@@ -470,20 +468,20 @@ body {
 }
 
 /* ======================================================== */
-/* FORMAT 1: HIMAL ENTERPRISES STYLES                       */
+/* FORMAT 1: HIMAL ENTERPRISES (EXACT PINK SLIP MATCH)      */
 /* ======================================================== */
 
 .template-himal-view {
   font-family: 'Courier Prime', 'Consolas', monospace;
 }
 
-.template-himal-view .bill-header {
+.h-header {
   position: relative;
   text-align: center;
   margin-bottom: 2px;
 }
 
-.template-himal-view .header-logo-badge {
+.h-logo-badge {
   position: absolute;
   left: 0;
   top: 0;
@@ -491,7 +489,7 @@ body {
   align-items: center;
 }
 
-.template-himal-view .logo-box {
+.h-logo-box {
   border: 1px solid var(--receipt-ink);
   border-radius: 50%;
   width: 52px;
@@ -506,27 +504,27 @@ body {
   opacity: 0.85;
 }
 
-.portrait-mode .template-himal-view .logo-box {
+.portrait-mode .h-logo-box {
   width: 70px;
   height: 48px;
 }
 
-.template-himal-view .logo-box .np-text {
+.h-logo-box .h-np-text {
   font-size: 6.5px;
   font-weight: 700;
   line-height: 1;
 }
 
-.portrait-mode .template-himal-view .logo-box .np-text {
+.portrait-mode .h-logo-box .h-np-text {
   font-size: 8px;
 }
 
-.template-himal-view .logo-box .np-sub {
+.h-logo-box .h-np-sub {
   font-size: 5px;
   line-height: 1;
 }
 
-.template-himal-view .company-name {
+.h-company-name {
   font-size: 13.5px;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -534,28 +532,24 @@ body {
   margin-bottom: 1px;
 }
 
-.portrait-mode .template-himal-view .company-name {
+.portrait-mode .h-company-name {
   font-size: 19px;
   margin-bottom: 2px;
 }
 
-.template-himal-view .company-address {
+.h-company-address,
+.h-company-contact {
   font-size: 9px;
   font-weight: 700;
   margin-bottom: 1px;
 }
 
-.template-himal-view .company-contact {
-  font-size: 9px;
-  margin-bottom: 1px;
-}
-
-.template-himal-view .company-pan {
+.h-company-pan {
   font-size: 9.5px;
   font-weight: 700;
 }
 
-.template-himal-view .tax-invoice-badge {
+.h-tax-badge {
   text-align: center;
   font-weight: 700;
   font-size: 10.5px;
@@ -564,12 +558,12 @@ body {
   text-underline-offset: 2px;
 }
 
-.portrait-mode .template-himal-view .tax-invoice-badge {
+.portrait-mode .h-tax-badge {
   font-size: 13.5px;
   margin: 4px 0 8px 0;
 }
 
-.template-himal-view .invoice-meta-grid {
+.h-meta-grid {
   display: flex;
   justify-content: space-between;
   border-top: 1px solid var(--receipt-ink);
@@ -579,107 +573,113 @@ body {
   font-size: 9.5px;
 }
 
-.portrait-mode .template-himal-view .invoice-meta-grid {
+.portrait-mode .h-meta-grid {
   padding: 6px 2px;
   font-size: 12px;
 }
 
-.template-himal-view .meta-col {
+.h-meta-col {
   display: flex;
   flex-direction: column;
   gap: 1.5px;
 }
 
-.template-himal-view .meta-left { flex: 1.35; }
-.template-himal-view .meta-right { flex: 0.95; }
+.h-meta-left { flex: 1.35; }
+.h-meta-right { flex: 0.95; }
 
-.template-himal-view .meta-row {
+.h-meta-row {
   display: flex;
   align-items: baseline;
 }
 
-.template-himal-view .meta-label {
+.h-lbl {
   font-weight: 700;
   min-width: 75px;
   display: inline-block;
 }
 
-.portrait-mode .template-himal-view .meta-label {
-  min-width: 100px;
+.portrait-mode .h-lbl { min-width: 100px; }
+.h-val { flex: 1; font-weight: 400; }
+
+/* Himal Table with open vertical lanes */
+.h-table-wrap {
+  width: 100%;
 }
 
-.template-himal-view .meta-val {
-  font-weight: 400;
-  flex: 1;
-}
-
-.template-himal-view .bill-table {
+.h-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: -1px;
   font-size: 9.5px;
 }
 
-.portrait-mode .template-himal-view .bill-table {
+.portrait-mode .h-table {
   font-size: 12px;
 }
 
-.template-himal-view .bill-table th,
-.template-himal-view .bill-table td {
+.h-table th,
+.h-table td {
   border-left: 1px solid var(--receipt-ink);
   border-right: 1px solid var(--receipt-ink);
   padding: 1.5px 3px;
   vertical-align: middle;
 }
 
-.template-himal-view .bill-table thead tr {
+.h-table thead tr {
   border-top: 1px solid var(--receipt-ink);
   border-bottom: 1px solid var(--receipt-ink);
 }
 
-.template-himal-view .bill-table th {
+.h-table th {
   font-weight: 700;
   text-align: left;
   padding: 2px 3px;
 }
 
-.template-himal-view .col-sn { width: 6%; text-align: center; }
-.template-himal-view .col-hscode { width: 15%; }
-.template-himal-view .col-particulars { width: 28%; }
-.template-himal-view .col-qty { width: 11%; text-align: right; }
-.template-himal-view .col-unit { width: 8%; text-align: center; }
-.template-himal-view .col-rate { width: 15%; text-align: right; }
-.template-himal-view .col-disc { width: 5%; text-align: center; }
-.template-himal-view .col-amount { width: 12%; text-align: right; }
+.hc-sn { width: 6%; text-align: center; }
+.hc-hscode { width: 15%; }
+.hc-particulars { width: 28%; }
+.hc-qty { width: 11%; text-align: right; }
+.hc-unit { width: 8%; text-align: center; }
+.hc-rate { width: 15%; text-align: right; }
+.hc-disc { width: 5%; text-align: center; }
+.hc-amount { width: 12%; text-align: right; }
 
-.template-himal-view .empty-row td {
-  height: 10px;
+.h-open-row td {
+  height: 48px;
   border-top: none;
   border-bottom: none;
+  padding: 0;
 }
 
-.portrait-mode .template-himal-view .empty-row td {
-  height: 18px;
+.portrait-mode .h-open-row td {
+  height: 80px;
 }
 
-.template-himal-view .total-row {
+.h-total-row {
   border-top: 1px solid var(--receipt-ink);
   border-bottom: 1px solid var(--receipt-ink);
   font-weight: 700;
 }
 
-.template-himal-view .total-row td {
+.h-total-row td {
   padding: 2px 3px;
 }
 
-.template-himal-view .bill-summary-section {
+.h-total-lbl {
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Himal Summary */
+.h-summary-section {
   display: flex;
   justify-content: space-between;
   padding: 3px 1px;
   font-size: 9.5px;
 }
 
-.template-himal-view .summary-left {
+.h-sum-left {
   flex: 1.15;
   display: flex;
   flex-direction: column;
@@ -687,46 +687,52 @@ body {
   padding-right: 6px;
 }
 
-.template-himal-view .in-words-row {
+.h-words-row {
   margin-top: 1px;
   font-weight: 700;
   line-height: 1.2;
 }
 
-.template-himal-view .in-words-row .label {
+.h-words-lbl {
   font-weight: 700;
   font-style: italic;
   margin-right: 2px;
 }
 
-.template-himal-view .remarks-row {
+.h-words-val {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.h-remarks-row {
   margin-top: 6px;
   font-weight: 700;
 }
 
-.template-himal-view .summary-right {
+.h-sum-right {
   flex: 0.95;
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
 
-.template-himal-view .calc-row {
+.h-calc-row {
   display: flex;
   justify-content: space-between;
   font-weight: 700;
 }
 
-.template-himal-view .calc-title { width: 95px; }
-.template-himal-view .calc-sep { width: 10px; text-align: center; }
-.template-himal-view .calc-value { flex: 1; text-align: right; }
-.template-himal-view .net-row {
+.h-calc-row span:first-child { width: 95px; }
+.h-calc-row span:nth-child(2) { width: 10px; text-align: center; }
+.h-calc-val { flex: 1; text-align: right; }
+
+.h-net-row {
   border-top: 1px solid var(--receipt-ink);
   padding-top: 1px;
   margin-top: 1px;
 }
 
-.template-himal-view .bill-footer {
+.h-footer {
   margin-top: auto;
   padding-top: 12px;
   padding-bottom: 2px;
@@ -737,32 +743,28 @@ body {
   width: 100%;
 }
 
-.template-himal-view .sig-col { display: flex; flex-direction: column; }
-.template-himal-view .sig-left { width: 52%; align-items: flex-start; text-align: left; }
-.template-himal-view .sig-right { width: 44%; align-items: center; text-align: center; }
+.h-sig-left { width: 52%; text-align: left; }
+.h-sig-right { width: 44%; text-align: center; }
 
-.template-himal-view .prepared-by-text {
+.h-prepared-name {
   font-size: 9.2px;
   font-weight: 700;
-  font-family: 'Courier Prime', monospace;
-  color: var(--receipt-ink);
   margin-bottom: 2px;
   text-align: center;
-  min-height: 12px;
 }
 
-.template-himal-view .sig-line {
+.h-sig-line {
   width: 100%;
   border-bottom: 1.5px dotted var(--receipt-ink);
   margin-bottom: 3px;
   height: 1px;
 }
 
-.template-himal-view .sig-title { font-weight: 700; margin-bottom: 1px; white-space: nowrap; }
-.template-himal-view .generated-time { font-size: 8.2px; font-weight: 700; margin-top: 2px; white-space: nowrap; }
+.h-sig-lbl { font-weight: 700; margin-bottom: 1px; white-space: nowrap; }
+.h-gen-time { font-size: 8.2px; font-weight: 700; margin-top: 2px; white-space: nowrap; }
 
 /* ======================================================== */
-/* FORMAT 2: BANGLAMUKHI OIL STORE (ERP STYLE)              */
+/* FORMAT 2: BANGLAMUKHI OIL STORE (EXACT ERP MATCH)        */
 /* ======================================================== */
 
 .template-banglamukhi-view {
@@ -772,50 +774,49 @@ body {
 
 .b-header {
   text-align: center;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
 .b-company-name {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
   text-transform: uppercase;
   margin-bottom: 1px;
 }
 
-.portrait-mode .b-company-name {
-  font-size: 16px;
-}
+.portrait-mode .b-company-name { font-size: 15px; }
 
 .b-address,
 .b-contact,
 .b-email {
-  font-size: 8.5px;
+  font-size: 8px;
   line-height: 1.15;
 }
 
 .portrait-mode .b-address,
 .portrait-mode .b-contact,
-.portrait-mode .b-email {
-  font-size: 11px;
+.portrait-mode .b-email { font-size: 10.5px; }
+
+/* Top Left PAN row */
+.b-pan-row {
+  display: flex;
+  justify-content: flex-start;
+  margin: 1px 0 2px 0;
 }
 
 .b-pan-container {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin: 3px 0 2px 0;
+  gap: 5px;
 }
 
 .b-pan-label {
-  font-size: 8.5px;
+  font-size: 8px;
   font-weight: 700;
 }
 
-.portrait-mode .b-pan-label {
-  font-size: 11px;
-}
+.portrait-mode .b-pan-label { font-size: 10.5px; }
 
 .b-pan-boxes {
   display: flex;
@@ -823,51 +824,52 @@ body {
 }
 
 .b-pan-box {
-  width: 13px;
-  height: 14px;
+  width: 12px;
+  height: 13px;
   border: 1px solid #111827;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 700;
   font-family: 'Roboto Mono', monospace;
   background: #fff;
 }
 
 .portrait-mode .b-pan-box {
-  width: 17px;
-  height: 18px;
-  font-size: 12px;
+  width: 16px;
+  height: 17px;
+  font-size: 11.5px;
 }
 
+/* Centered Tax Invoice Box */
 .b-tax-title-box {
   border: 1px solid #111827;
-  width: 110px;
-  margin: 2px auto 4px auto;
+  width: 100px;
+  margin: 1px auto 3px auto;
   text-align: center;
   font-weight: 700;
-  font-size: 10px;
+  font-size: 9.5px;
   padding: 1px 3px;
   background: rgba(0, 0, 0, 0.02);
 }
 
 .portrait-mode .b-tax-title-box {
-  width: 140px;
-  font-size: 13px;
+  width: 130px;
+  font-size: 12.5px;
   padding: 2px 4px;
 }
 
-/* Boxed Metadata section */
+/* Enclosed Metadata Box */
 .b-meta-box {
   border: 1px solid #111827;
-  padding: 3px 5px;
-  margin-bottom: 2px;
-  font-size: 8.5px;
+  padding: 2.5px 4px;
+  margin-bottom: 0px;
+  font-size: 8px;
 }
 
 .portrait-mode .b-meta-box {
-  font-size: 11px;
+  font-size: 10.5px;
   padding: 5px 8px;
 }
 
@@ -884,44 +886,40 @@ body {
 .b-row {
   display: flex;
   align-items: baseline;
-  margin-bottom: 1px;
+  margin-bottom: 0.5px;
 }
 
 .b-lbl {
-  width: 80px;
+  width: 78px;
   font-weight: 500;
 }
 
-.b-sep {
-  width: 8px;
-}
-
-.b-val {
-  flex: 1;
-}
+.b-sep { width: 6px; }
+.b-val { flex: 1; }
 
 .b-meta-bottom {
   display: flex;
   justify-content: space-between;
-  padding-top: 2px;
-  font-size: 8.2px;
+  padding-top: 1.5px;
+  font-size: 7.8px;
 }
 
-.portrait-mode .b-meta-bottom {
-  font-size: 10.5px;
+.portrait-mode .b-meta-bottom { font-size: 10px; }
+
+/* Banglamukhi Table with continuous open vertical lanes */
+.b-table-wrap {
+  width: 100%;
 }
 
-/* Banglamukhi Table */
 .b-table {
   width: 100%;
   border-collapse: collapse;
   border: 1px solid #111827;
-  font-size: 8.8px;
+  border-top: none;
+  font-size: 8.2px;
 }
 
-.portrait-mode .b-table {
-  font-size: 11.5px;
-}
+.portrait-mode .b-table { font-size: 11px; }
 
 .b-table th,
 .b-table td {
@@ -930,9 +928,7 @@ body {
 }
 
 .portrait-mode .b-table th,
-.portrait-mode .b-table td {
-  padding: 3px 5px;
-}
+.portrait-mode .b-table td { padding: 3px 5px; }
 
 .b-table th {
   font-weight: 700;
@@ -940,26 +936,32 @@ body {
   background: rgba(0, 0, 0, 0.03);
 }
 
-.b-empty-row td {
-  height: 9px;
+.b-item-row td {
+  border-bottom: none;
 }
 
-.portrait-mode .b-empty-row td {
-  height: 16px;
+.b-open-row td {
+  height: 48px;
+  border-top: none;
+  border-bottom: 1px solid #111827;
 }
 
-/* Summary Grid */
+.portrait-mode .b-open-row td {
+  height: 80px;
+}
+
+/* Banglamukhi Summary Box */
 .b-summary-grid {
   display: flex;
   justify-content: space-between;
   border: 1px solid #111827;
   border-top: none;
-  font-size: 8.5px;
-  padding: 3px 4px;
+  font-size: 8px;
+  padding: 2.5px 3.5px;
 }
 
 .portrait-mode .b-summary-grid {
-  font-size: 11px;
+  font-size: 10.5px;
   padding: 5px 8px;
 }
 
@@ -970,41 +972,27 @@ body {
   justify-content: space-between;
 }
 
-.b-remarks-row {
-  margin-bottom: 2px;
-}
-
-.b-words-row {
-  margin: 2px 0;
-}
-
-.b-words-lbl {
-  font-weight: 700;
-}
-
-.b-words-val {
-  font-weight: 700;
-  text-transform: uppercase;
-}
+.b-remarks-row { margin-bottom: 1px; }
+.b-words-row { margin: 1.5px 0; }
+.b-words-lbl { font-weight: 700; }
+.b-words-val { font-weight: 700; text-transform: uppercase; }
 
 .b-note-box {
-  font-size: 7.2px;
+  font-size: 6.8px;
   line-height: 1.15;
   color: #1f2937;
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
-.portrait-mode .b-note-box {
-  font-size: 9.5px;
-}
+.portrait-mode .b-note-box { font-size: 9px; }
 
 .b-summary-right {
   width: 44%;
   border-left: 1px solid #111827;
-  padding-left: 5px;
+  padding-left: 4px;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0.5px;
 }
 
 .b-calc-row {
@@ -1027,30 +1015,29 @@ body {
 }
 
 .b-for-company {
-  font-size: 7.5px;
+  font-size: 7.2px;
   font-weight: 700;
   text-align: right;
-  margin-top: 3px;
+  margin-top: 2px;
   text-transform: uppercase;
 }
 
-.portrait-mode .b-for-company {
-  font-size: 10px;
-}
+.portrait-mode .b-for-company { font-size: 9.5px; }
 
-/* Banglamukhi 3 Signatures Footer */
+/* 3-Column Footer */
 .b-footer {
   margin-top: auto;
-  padding-top: 14px;
+  padding-top: 10px;
   display: flex;
   justify-content: space-between;
-  font-size: 8px;
+  align-items: flex-end;
+  font-size: 7.8px;
   font-weight: 700;
   text-align: center;
 }
 
 .portrait-mode .b-footer {
-  padding-top: 25px;
+  padding-top: 22px;
   font-size: 10.5px;
 }
 
@@ -1066,6 +1053,15 @@ body {
   border-bottom: 1px solid #111827;
   margin-bottom: 2px;
   height: 1px;
+}
+
+.b-sig-auth {
+  position: relative;
+}
+
+.b-sig-svg-wrap {
+  margin-bottom: -6px;
+  opacity: 0.9;
 }
 
 /* ======================================================== */
